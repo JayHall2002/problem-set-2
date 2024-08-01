@@ -3,6 +3,11 @@ PART 1: ETL the two datasets and save each in `data/` as .csv's
 '''
 
 import pandas as pd
+import ssl
+import urllib
+
+# Disable SSL verification
+ssl._create_default_https_context = ssl._create_unverified_context
 
 def extract_and_save_data():
     pred_universe_raw = pd.read_csv('https://www.dropbox.com/scl/fi/69syqjo6pfrt9123rubio/universe_lab6.feather?rlkey=h2gt4o6z9r5649wo6h6ud6dce&dl=1')
@@ -15,3 +20,4 @@ def extract_and_save_data():
     # Save both data frames to `data/`
     pred_universe_raw.to_csv('../data/pred_universe_raw.csv', index=False)
     arrest_events_raw.to_csv('../data/arrest_events_raw.csv', index=False)
+
