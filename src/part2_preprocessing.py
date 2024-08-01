@@ -17,6 +17,10 @@ def preprocess_data():
     # Check for column names after merging
     print("df_arrests columns:", df_arrests.columns)
 
+    # Ensure date columns are in datetime format
+    df_arrests['arrest_date_event'] = pd.to_datetime(df_arrests['arrest_date_event'])
+    arrest_events_raw['arrest_date_event'] = pd.to_datetime(arrest_events_raw['arrest_date_event'])
+
     # Create target variable y
     df_arrests['y'] = df_arrests.apply(lambda row: check_felony_rearrest(row, arrest_events_raw), axis=1)
     print("What share of arrestees were rearrested for a felony crime in the next year?")
