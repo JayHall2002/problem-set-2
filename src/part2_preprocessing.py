@@ -18,7 +18,7 @@ def preprocess_data():
     print("df_arrests columns:", df_arrests.columns)
 
     # Create target variable y
-    df_arrests['y'] = df_arrests.apply(lambda row: check_felony_rearrest(row), axis=1)
+    df_arrests['y'] = df_arrests.apply(lambda row: check_felony_rearrest(row, arrest_events_raw), axis=1)
     print("What share of arrestees were rearrested for a felony crime in the next year?")
     print(df_arrests['y'].mean())
 
@@ -30,17 +30,33 @@ def preprocess_data():
     else:
         print("'offense_category' column not found in df_arrests")
 
-    df_arrests['num_fel_arrests_last_year'] = df_arrests.apply(lambda row: count_felony_arrests_last_year(row), axis=1)
+    df_arrests['num_fel_arrests_last_year'] = df_arrests.apply(lambda row: count_felony_arrests_last_year(row, arrest_events_raw), axis=1)
     print("What is the average number of felony arrests in the last year?")
     print(df_arrests['num_fel_arrests_last_year'].mean())
 
     return df_arrests
 
 # Helper functions (example implementation)
-def check_felony_rearrest(row):
-    # Logic to check if the person was rearrested for a felony crime in the next year
-    return 0  # Placeholder implementation
+def check_felony_rearrest(row, arrest_events_raw):
+    # Check if the person was rearrested for a felony crime in the next year
+    arrest_date = row['arrest_date_event']
+    person_id = row['person_id']
+    if pd.isnull(arrest_date):
+        return 0
+    rearrests = arrest_events_raw[(arrest_events_raw['person_id'] == person_id) &
+                                  (arrest_events_raw['arrest_date_event'] > arrest_date) &
+                                  (arrest_events_raw['arrest_date_event'] <= arrest_date + pd.Timedelta(days=365)) &
+                                  (arrest_events_raw['offense_category'].str.contains('Felony', na=False))]
+    return 1 if not rearrests.empty else 0
 
-def count_felony_arrests_last_year(row):
-    # Logic to count felony arrests in the last year
-    return 0  # Placeholder implementation
+def count_felony_arrests_last_year(row, arrest_events_raw):
+    # Count felony arrests in the last year
+    arrest_date = row['arrest_date_event']
+    person_id = row['person_id']
+    if pd.isnull(arrest_date):
+        return 0
+    past_arrests = arrest_events_raw[(arrest_events_raw['person_id'] == person_id) &
+                                     (arrest_events_raw['arrest_date_event'] < arrest_date) &
+                                     (arrest_events_raw['arrest_date_event'] >= arrest_date - pd.Timedelta(days=365)) &
+                                     (arrest_events_raw['offense_category'].str.contains('Felony', na=False))]
+    return len(past_arrests)
