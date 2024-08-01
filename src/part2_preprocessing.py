@@ -23,12 +23,12 @@ def preprocess_data():
     print(df_arrests['y'].mean())
 
     # Create predictive features
-    if 'charge_type' in df_arrests.columns:
-        df_arrests['current_charge_felony'] = df_arrests['charge_type'].apply(lambda x: 1 if x == 'Felony' else 0)
+    if 'offense_category' in df_arrests.columns:
+        df_arrests['current_charge_felony'] = df_arrests['offense_category'].apply(lambda x: 1 if 'Felony' in x else 0)
         print("What share of current charges are felonies?")
         print(df_arrests['current_charge_felony'].mean())
     else:
-        print("'charge_type' column not found in df_arrests")
+        print("'offense_category' column not found in df_arrests")
 
     df_arrests['num_fel_arrests_last_year'] = df_arrests.apply(lambda row: count_felony_arrests_last_year(row), axis=1)
     print("What is the average number of felony arrests in the last year?")
