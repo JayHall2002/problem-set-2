@@ -26,6 +26,10 @@ def preprocess_data():
     print("What share of arrestees were rearrested for a felony crime in the next year?")
     print(df_arrests['y'].mean())
 
+    # Check the distribution of 'y'
+    print("Distribution of 'y':")
+    print(df_arrests['y'].value_counts())
+
     # Create predictive features
     if 'offense_category' in df_arrests.columns:
         df_arrests['current_charge_felony'] = df_arrests['offense_category'].apply(lambda x: 1 if 'Felony' in x else 0)
@@ -51,6 +55,8 @@ def check_felony_rearrest(row, arrest_events_raw):
                                   (arrest_events_raw['arrest_date_event'] > arrest_date) &
                                   (arrest_events_raw['arrest_date_event'] <= arrest_date + pd.Timedelta(days=365)) &
                                   (arrest_events_raw['offense_category'].str.contains('Felony', na=False))]
+    # Debugging statement
+    print(f"Person ID: {person_id}, Arrest Date: {arrest_date}, Rearrests: {len(rearrests)}")
     return 1 if not rearrests.empty else 0
 
 def count_felony_arrests_last_year(row, arrest_events_raw):
