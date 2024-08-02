@@ -17,6 +17,7 @@ def main():
 
     # PART 2: Call functions/instantiate objects from preprocessing
     df_arrests = preprocessing.preprocess_data()
+    print("Columns in df_arrests:", df_arrests.columns)
 
     # PART 3: Call functions/instantiate objects from logistic_regression
     df_arrests_train, df_arrests_test, pred_lr = logistic_regression.run_logistic_regression(df_arrests)
