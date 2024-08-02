@@ -20,7 +20,7 @@ def main():
     df_arrests = preprocessing.preprocess_data()
 
     # PART 3: Call functions/instantiate objects from logistic_regression
-    df_arrests_train, df_arrests_test, pred_lr = logistic_regression.run(df_arrests)
+    df_arrests_train, df_arrests_test, pred_lr = logistic_regression.run_logistic_regression(df_arrests)
 
     # PART 4: Call functions/instantiate objects from decision_tree
     df_arrests_test, pred_dt = decision_tree.run_decision_tree(df_arrests_train, df_arrests_test)
