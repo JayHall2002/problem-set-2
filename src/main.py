@@ -20,9 +20,7 @@ def main():
     print("Columns in df_arrests:", df_arrests.columns)
     # Rename or create the target column 'y'
     if 'y' not in df_arrests.columns:
-        # Modify this line to match the appropriate column name from the dataset
-        df_arrests['y'] = df_arrests['offense_category']  # Adjust 'offense_category' to your target column
-
+        df_arrests['y'] = df_arrests['charge_degree']  # Adjust this to your target column
 
     # PART 3: Call functions/instantiate objects from logistic_regression
     df_arrests_train, df_arrests_test, pred_lr = logistic_regression.run_logistic_regression(df_arrests)
