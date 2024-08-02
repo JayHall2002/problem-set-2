@@ -8,18 +8,10 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import accuracy_score
 
-def run(data_dir):
-    # Paths to the preprocessed data files
-    preprocessed_pred_universe_file = os.path.join(data_dir, 'preprocessed_pred_universe.csv')
-    preprocessed_arrest_events_file = os.path.join(data_dir, 'preprocessed_arrest_events.csv')
-
-    # Read the data
-    pred_universe = pd.read_csv(preprocessed_pred_universe_file)
-    arrest_events = pd.read_csv(preprocessed_arrest_events_file)
-
-    # Assume 'target' is the column to be predicted
-    X = pred_universe.drop(columns=['target'])
-    y = pred_universe['target']
+def run_logistic_regression(df_arrests):
+    # Split the data
+    X = df_arrests.drop(columns=['y'])
+    y = df_arrests['y']
 
     # Check the distribution of the target variable
     unique_classes = y.unique()
@@ -44,14 +36,18 @@ def run(data_dir):
     accuracy = accuracy_score(y_test, y_pred)
     print(f"Logistic Regression Accuracy: {accuracy}")
 
-    # Save the model if needed
-    # import joblib
-    # joblib.dump(gs_cv.best_estimator(), os.path.join(data_dir, 'logistic_regression_model.pkl'))
+    # Prepare the result DataFrames
+    df_arrests_train = X_train.copy()
+    df_arrests_train['y'] = y_train
 
-    # Optionally return data for further analysis
-    return X_train, X_test, y_train, y_test, gs_cv.best_estimator_
+    df_arrests_test = X_test.copy()
+    df_arrests_test['y'] = y_test
+    df_arrests_test['pred_lr'] = y_pred
+    
+    return df_arrests_train, df_arrests_test, y_pred
 
 # If this script is run standalone, execute the run function
 if __name__ == "__main__":
     data_directory = os.path.join(os.path.dirname(__file__), '../data')
-    run(data_directory)
+    pred_universe = pd.read_csv(os.path.join(data_directory, 'preprocessed_pred_universe.csv'))
+    df_arrests_train, df_arrests_test, pred_lr = run_logistic_regression(pred_universe)
