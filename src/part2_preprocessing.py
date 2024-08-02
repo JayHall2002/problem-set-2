@@ -2,8 +2,8 @@ import pandas as pd
 
 def preprocess_data():
     # Load the datasets
-    pred_universe_raw = pd.read_feather('/mnt/data/universe_lab6.feather')
-    arrest_events_raw = pd.read_feather('/mnt/data/arrest_events_lab6.feather')
+    pred_universe_raw = pd.read_csv('../data/pred_universe_raw.csv')
+    arrest_events_raw = pd.read_csv('../data/arrest_events_raw.csv')
 
     # Display the columns of both dataframes
     print("Columns in pred_universe_raw:", pred_universe_raw.columns)
@@ -84,7 +84,6 @@ def preprocess_data():
     merged_data['num_fel_arrests_last_year'].fillna(0, inplace=True)
 
     # Create a binary target variable 'y' (rearrested or not)
-    merged_data = pd.merge(merged_data, rearrests, on='person_id', how='left')
     merged_data['y'] = merged_data['rearrests'].apply(lambda x: 1 if x > 0 else 0)
 
     # Check the unique classes in the target variable
