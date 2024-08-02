@@ -2,8 +2,8 @@ import pandas as pd
 
 def preprocess_data():
     # Load the datasets
-    pred_universe_raw = pd.read_feather('/mnt/data/universe_lab6.feather')
-    arrest_events_raw = pd.read_feather('/mnt/data/arrest_events_lab6.feather')
+    pred_universe_raw = pd.read_csv('../data/pred_universe_raw.csv')
+    arrest_events_raw = pd.read_csv('../data/arrest_events_raw.csv')
 
     # Drop rows with NaN values
     pred_universe_raw.dropna(inplace=True)
