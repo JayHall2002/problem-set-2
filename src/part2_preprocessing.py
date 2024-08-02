@@ -43,6 +43,8 @@ def preprocess_data():
 
     # Function to calculate time difference in months
     def diff_month(d1, d2):
+        d1 = pd.Timestamp(d1)
+        d2 = pd.Timestamp(d2)
         return (d1.year - d2.year) * 12 + d1.month - d2.month
 
     # Calculate time to rearrest in months
