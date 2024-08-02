@@ -2,8 +2,12 @@ import pandas as pd
 
 def preprocess_data():
     # Load the datasets
-    pred_universe_raw = pd.read_csv('../data/pred_universe_raw.csv')
-    arrest_events_raw = pd.read_csv('../data/arrest_events_raw.csv')
+    pred_universe_raw = pd.read_feather('/mnt/data/universe_lab6.feather')
+    arrest_events_raw = pd.read_feather('/mnt/data/arrest_events_lab6.feather')
+
+    # Display the columns of both dataframes
+    print("Columns in pred_universe_raw:", pred_universe_raw.columns)
+    print("Columns in arrest_events_raw:", arrest_events_raw.columns)
 
     # Drop rows with NaN values
     pred_universe_raw.dropna(inplace=True)
@@ -23,7 +27,6 @@ def preprocess_data():
 
     # Calculate the number of people with rearrests
     num_people_with_rearrests = rearrests[rearrests['rearrests'] > 0].shape[0]
-
     print(f"Number of people with rearrests: {num_people_with_rearrests}")
 
     # Extract relevant columns
@@ -60,7 +63,6 @@ def preprocess_data():
 
     # Part 2: Find the number of people with no rearrests
     num_people_no_rearrests = rearrests[rearrests['rearrests'] == 0].shape[0]
-
     print(f"Number of people with no rearrests: {num_people_no_rearrests}")
 
     # Extract people with no rearrests
@@ -75,13 +77,20 @@ def preprocess_data():
 
     # Create the necessary columns for the decision tree model
     merged_data['current_charge_felony'] = (merged_data['charge_degree'] == 'F').astype(int)
-    merged_data['num_fel_arrests_last_year'] = merged_data.groupby('person_id')['charge_degree'].apply(lambda x: (x == 'F').sum())
-    merged_data['y'] = merged_data['charge_degree'].apply(lambda x: 1 if x == 'F' else 0)
+    one_year_ago = merged_data['arrest_date_univ'] - pd.DateOffset(years=1)
+    recent_arrests = merged_data[merged_data['arrest_date_event'] >= one_year_ago]
+    num_recent_felony_arrests = recent_arrests.groupby('person_id').apply(lambda x: (x['charge_degree'] == 'F').sum()).reset_index(name='num_fel_arrests_last_year')
+    merged_data = pd.merge(merged_data, num_recent_felony_arrests, on='person_id', how='left')
+    merged_data['num_fel_arrests_last_year'].fillna(0, inplace=True)
 
-    # Verify the target variable
-    unique_classes = merged_data['y'].unique()
-    print(f"Unique classes in target variable 'y': {unique_classes}")
+    # Create a binary target variable 'y' (rearrested or not)
+    merged_data = pd.merge(merged_data, rearrests, on='person_id', how='left')
+    merged_data['y'] = merged_data['rearrests'].apply(lambda x: 1 if x > 0 else 0)
 
+    # Check the unique classes in the target variable
+    print("Unique classes in target variable 'y':", merged_data['y'].unique())
+
+    # Return the preprocessed dataframe
     return merged_data
 
 # If this script is run standalone, execute the preprocess_data function
