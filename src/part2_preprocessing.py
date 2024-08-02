@@ -29,14 +29,11 @@ def preprocess_data():
     num_people_with_rearrests = rearrests[rearrests['rearrests'] > 0].shape[0]
     print(f"Number of people with rearrests: {num_people_with_rearrests}")
 
-    # Extract relevant columns
-    data = merged_data[['person_id', 'arrest_date_event', 'charge_degree']]
-
     # Merge the rearrests count back to the original dataframe
-    data = data.merge(rearrests, on='person_id')
+    merged_data = pd.merge(merged_data, rearrests, on='person_id')
 
-    # Keep only the records with rearrests
-    people_with_rearrests = data[data['rearrests'] > 0]
+    # Extract relevant columns for people with rearrests
+    people_with_rearrests = merged_data[merged_data['rearrests'] > 0]
 
     # Sort by person_id and arrest_date_event
     people_with_rearrests = people_with_rearrests.sort_values(by=['person_id', 'arrest_date_event'])
@@ -57,7 +54,7 @@ def preprocess_data():
     # Filter out the first arrest date rows as they are not rearrests
     people_with_rearrests = people_with_rearrests[people_with_rearrests['time_to_rearrest_months'] != 0]
 
-    # Print the results
+    # Print the results for people with rearrests
     for index, row in people_with_rearrests.iterrows():
         print(f"Person ID: {row['person_id']}, Arrest Date: {row['arrest_date_event']}, Time to Rearrest (months): {row['time_to_rearrest_months']}")
 
@@ -66,12 +63,12 @@ def preprocess_data():
     print(f"Number of people with no rearrests: {num_people_no_rearrests}")
 
     # Extract people with no rearrests
-    people_no_rearrests = data[data['rearrests'] == 0]
+    people_no_rearrests = merged_data[merged_data['rearrests'] == 0]
 
     # Sort by person_id and arrest_date_event
     people_no_rearrests = people_no_rearrests.sort_values(by=['person_id', 'arrest_date_event'])
 
-    # Print the results
+    # Print the results for people with no rearrests
     for index, row in people_no_rearrests.iterrows():
         print(f"Person ID: {row['person_id']}, Arrest Date: {row['arrest_date_event']}, Rearrests: {row['rearrests']}")
 
