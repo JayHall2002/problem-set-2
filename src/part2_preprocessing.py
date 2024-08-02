@@ -3,10 +3,13 @@ PART 2: Pre-processing
 '''
 
 import pandas as pd
+import os
 
 def preprocess_data():
-    pred_universe_raw = pd.read_csv('../data/pred_universe_raw.csv')
-    arrest_events_raw = pd.read_csv('../data/arrest_events_raw.csv')
+    data_dir = os.path.join(os.path.dirname(__file__), '../data')
+
+    pred_universe_raw = pd.read_csv(os.path.join(data_dir, 'pred_universe_raw.csv'))
+    arrest_events_raw = pd.read_csv(os.path.join(data_dir, 'arrest_events_raw.csv'))
 
     # Print column names for verification
     print("pred_universe_raw columns:", pred_universe_raw.columns)
@@ -49,7 +52,7 @@ def check_felony_rearrest(row, arrest_events_raw):
     # Check if the person was rearrested for a felony crime in the next year
     arrest_date = row['arrest_date_event']
     person_id = row['person_id']
-    if pd.isnull(arrest_date):
+    if pd.isnull(arrest_date) or pd.isnull(person_id):
         return 0
     rearrests = arrest_events_raw[(arrest_events_raw['person_id'] == person_id) &
                                   (arrest_events_raw['arrest_date_event'] > arrest_date) &
@@ -63,10 +66,14 @@ def count_felony_arrests_last_year(row, arrest_events_raw):
     # Count felony arrests in the last year
     arrest_date = row['arrest_date_event']
     person_id = row['person_id']
-    if pd.isnull(arrest_date):
+    if pd.isnull(arrest_date) or pd.isnull(person_id):
         return 0
     past_arrests = arrest_events_raw[(arrest_events_raw['person_id'] == person_id) &
                                      (arrest_events_raw['arrest_date_event'] < arrest_date) &
                                      (arrest_events_raw['arrest_date_event'] >= arrest_date - pd.Timedelta(days=365)) &
                                      (arrest_events_raw['offense_category'].str.contains('Felony', na=False))]
     return len(past_arrests)
+
+# If this script is run standalone, execute the function
+if __name__ == "__main__":
+    preprocess_data()
