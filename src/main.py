@@ -12,7 +12,6 @@ import part5_calibration_plot as calibration_plot
 
 # Call functions / instantiate objects from the .py files
 def main():
-
     # PART 1: Instantiate etl, saving the two datasets in `./data/`
     etl.extract_and_save_data()
 
