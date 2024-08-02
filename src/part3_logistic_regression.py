@@ -44,13 +44,13 @@ def preprocess_data(df):
 def run_logistic_regression(df_arrests):
     # Ensure the target column 'y' exists
     if 'y' not in df_arrests.columns:
-        df_arrests['y'] = df_arrests['charge_degree']  # Adjust 'charge_degree' to your target column
+        df_arrests['y'] = df_arrests['offense_category']  # Adjust 'offense_category' to your target column
 
     # Preprocess the data
     preprocessor = preprocess_data(df_arrests)
     
     # Split features and target
-    X = df_arrests.drop(columns=['y', 'charge_degree'])
+    X = df_arrests.drop(columns=['y', 'offense_category'])
     y = df_arrests['y']
 
     # Check the distribution of the target variable
