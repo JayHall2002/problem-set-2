@@ -27,7 +27,7 @@ def preprocess_data():
     print(f"Number of people with rearrests: {num_people_with_rearrests}")
 
     # Extract relevant columns
-    data = merged_data[['person_id', 'arrest_date_event']]
+    data = merged_data[['person_id', 'arrest_date_event', 'charge_degree']]
 
     # Merge the rearrests count back to the original dataframe
     data = data.merge(rearrests, on='person_id')
@@ -73,8 +73,14 @@ def preprocess_data():
     for index, row in people_no_rearrests.iterrows():
         print(f"Person ID: {row['person_id']}, Arrest Date: {row['arrest_date_event']}, Rearrests: {row['rearrests']}")
 
+    # Create the necessary columns for the decision tree model
+    merged_data['current_charge_felony'] = (merged_data['charge_degree'] == 'F').astype(int)
+    merged_data['num_fel_arrests_last_year'] = merged_data.groupby('person_id')['charge_degree'].apply(lambda x: (x == 'F').sum())
+    merged_data['y'] = merged_data['charge_degree'].apply(lambda x: 1 if x == 'F' else 0)
+
     return merged_data
 
 # If this script is run standalone, execute the preprocess_data function
 if __name__ == "__main__":
-    preprocess_data()
+    df_arrests = preprocess_data()
+    print("Preprocessed Dataframe Columns:", df_arrests.columns)
