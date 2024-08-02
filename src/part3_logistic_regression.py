@@ -21,6 +21,7 @@ def run_logistic_regression(df_arrests):
 
     # Check the distribution of the target variable
     unique_classes = y.unique()
+    print(f"Unique classes in target variable 'y': {unique_classes}")
     if len(unique_classes) < 2:
         raise ValueError(f"The target variable needs to have at least two classes, but it has only one class: {unique_classes}")
 
@@ -37,7 +38,7 @@ def run_logistic_regression(df_arrests):
 
     # Define the model and parameters
     model = Pipeline(steps=[('preprocessor', preprocessor),
-                            ('classifier', LogisticRegression())])
+                            ('classifier', LogisticRegression(max_iter=1000))])
     
     param_grid = {
         'classifier__C': [0.1, 1, 10, 100, 1000],
