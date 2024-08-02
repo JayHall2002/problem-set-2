@@ -10,22 +10,22 @@ import part4_decision_tree as decision_tree
 import part5_calibration_plot as calibration_plot
 
 
-# Call functions / instanciate objects from the .py files
+# Call functions / instantiate objects from the .py files
 def main():
 
-    # PART 1: Instanciate etl, saving the two datasets in `./data/`
+    # PART 1: Instantiate etl, saving the two datasets in `./data/`
     etl.extract_and_save_data()
 
-    # PART 2: Call functions/instanciate objects from preprocessing
+    # PART 2: Call functions/instantiate objects from preprocessing
     df_arrests = preprocessing.preprocess_data()
 
-    # PART 3: Call functions/instanciate objects from logistic_regression
-    df_arrests_train, df_arrests_test, pred_lr = logistic_regression.run_logistic_regression(df_arrests)
+    # PART 3: Call functions/instantiate objects from logistic_regression
+    df_arrests_train, df_arrests_test, pred_lr = logistic_regression.run(df_arrests)
 
-    # PART 4: Call functions/instanciate objects from decision_tree
+    # PART 4: Call functions/instantiate objects from decision_tree
     df_arrests_test, pred_dt = decision_tree.run_decision_tree(df_arrests_train, df_arrests_test)
 
-    # PART 5: Call functions/instanciate objects from calibration_plot
+    # PART 5: Call functions/instantiate objects from calibration_plot
     y_test = df_arrests_test['y']
     calibration_plot.calibration_plot(y_test, df_arrests_test['pred_lr'], n_bins=5)
     calibration_plot.calibration_plot(y_test, df_arrests_test['pred_dt'], n_bins=5)
