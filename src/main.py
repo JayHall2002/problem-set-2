@@ -18,6 +18,10 @@ def main():
     # PART 2: Call functions/instantiate objects from preprocessing
     df_arrests = preprocessing.preprocess_data()
     print("Columns in df_arrests:", df_arrests.columns)
+    # Rename or create the target column 'y'
+    if 'y' not in df_arrests.columns:
+        df_arrests['y'] = df_arrests['charge_degree']  # Adjust 'charge_degree' to your target column
+
 
     # PART 3: Call functions/instantiate objects from logistic_regression
     df_arrests_train, df_arrests_test, pred_lr = logistic_regression.run_logistic_regression(df_arrests)
