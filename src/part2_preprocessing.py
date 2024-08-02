@@ -2,8 +2,8 @@ import pandas as pd
 
 def preprocess_data():
     # Load the datasets
-    pred_universe_raw = pd.read_csv('../data/pred_universe_raw.csv')
-    arrest_events_raw = pd.read_csv('../data/arrest_events_raw.csv')
+    pred_universe_raw = pd.read_feather('/mnt/data/universe_lab6.feather')
+    arrest_events_raw = pd.read_feather('/mnt/data/arrest_events_lab6.feather')
 
     # Drop rows with NaN values
     pred_universe_raw.dropna(inplace=True)
@@ -77,6 +77,10 @@ def preprocess_data():
     merged_data['current_charge_felony'] = (merged_data['charge_degree'] == 'F').astype(int)
     merged_data['num_fel_arrests_last_year'] = merged_data.groupby('person_id')['charge_degree'].apply(lambda x: (x == 'F').sum())
     merged_data['y'] = merged_data['charge_degree'].apply(lambda x: 1 if x == 'F' else 0)
+
+    # Verify the target variable
+    unique_classes = merged_data['y'].unique()
+    print(f"Unique classes in target variable 'y': {unique_classes}")
 
     return merged_data
 
